@@ -11,8 +11,8 @@
 // *************uncomment BWHOOP define for bwhoop, bwhoop pro, E011C Santa Edition, and Beta FPV Lite Flight Controllers
 // *************uncomment E011 define for E011 flight Controller
 // *************uncomment H8mini_blue_board for the H8 mini flight controller with blue circuit board
-#define BWHOOP
-//#define E011
+//#define BWHOOP
+#define E011
 //#define H8mini_blue_board
 
 
@@ -32,13 +32,22 @@
 
 // *************EXPO from 0.00 to 1.00 , 0 = no exp
 // *************positive = less sensitive near center 
-#define ACRO_EXPO_ROLL 0.80
-#define ACRO_EXPO_PITCH 0.80
-#define ACRO_EXPO_YAW 0.60
+#define DISABLE_EXPO
+#define ACRO_EXPO_ROLL 0.0
+#define ACRO_EXPO_PITCH 0.0
+#define ACRO_EXPO_YAW 0.0
 
-#define ANGLE_EXPO_ROLL 0.35
+#define ANGLE_EXPO_ROLL 0.0
 #define ANGLE_EXPO_PITCH 0.0
-#define ANGLE_EXPO_YAW 0.35
+#define ANGLE_EXPO_YAW 0.0
+
+#define RC_RATE_ROLL 1.29 //860
+#define RC_RATE_PITCH 1.29 //860
+#define RC_RATE_YAW 1.25 //500
+#define SUPER_EXPO_ROLL 0.7
+#define SUPER_EXPO_PITCH 0.7
+#define SUPER_EXPO_YAW 0.5
+#define BETAFLIGHT_RATES
 
 // *************transmitter stick adjustable deadband for roll/pitch/yaw
 // *************.01f = 1% of stick range - comment out to disable
@@ -49,8 +58,8 @@
 //#define RX_CG023_PROTOCOL
 //#define RX_H7_PROTOCOL
 //#define RX_BAYANG_PROTOCOL
-#define RX_BAYANG_PROTOCOL_TELEMETRY
-//#define RX_BAYANG_PROTOCOL_TELEMETRY_AUTOBIND
+//#define RX_BAYANG_PROTOCOL_TELEMETRY
+#define RX_BAYANG_PROTOCOL_TELEMETRY_AUTOBIND
 //#define RX_BAYANG_PROTOCOL_BLE_BEACON
 //#define RX_BAYANG_BLE_APP
 //#define RX_CX10BLUE_PROTOCOL

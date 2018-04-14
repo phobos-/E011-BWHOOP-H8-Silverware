@@ -91,6 +91,55 @@ float underthrottlefilt = 0;
 
 float rxcopy[4];
 
+#define SETPOINT_RATE_LIMIT 1998.0f
+#define RC_RATE_INCREMENTAL 14.54f
+
+static inline float constrainf(float amt, float low, float high)
+{
+    if (amt < low)
+        return low;
+    else if (amt > high)
+        return high;
+    else
+        return amt;
+}
+
+// https://github.com/betaflight/betaflight/blob/master/src/main/fc/fc_rc.c#L101
+static float calcBFRatesRad(int axis)
+{
+    float rcRate, rcExpo, superExpo;
+    if (axis == ROLL) {
+        rcExpo = (float) ACRO_EXPO_ROLL;
+        rcRate = (float) RC_RATE_ROLL;
+        superExpo = (float) SUPER_EXPO_ROLL;
+    } else if (axis == PITCH) {
+		rcExpo = (float) ACRO_EXPO_PITCH;
+        rcRate = (float) RC_RATE_PITCH;
+        superExpo = (float) SUPER_EXPO_PITCH;
+	} else {
+        rcExpo = (float) ACRO_EXPO_YAW;
+        rcRate = (float) RC_RATE_YAW;
+        superExpo = (float) SUPER_EXPO_YAW;
+    }
+    if (rcRate > 2.0f) {
+        rcRate += RC_RATE_INCREMENTAL * (rcRate - 2.0f);
+    }
+
+    const float rcCommandfAbs = rxcopy[axis] > 0 ? rxcopy[axis] : -rxcopy[axis];
+
+    if (rcExpo) {
+        rxcopy[axis] = rxcopy[axis] * rcCommandfAbs * rcCommandfAbs * rcCommandfAbs * rcExpo + rxcopy[axis] * (1.0f - rcExpo);
+    }
+
+    float angleRate = 200.0f * rcRate * rxcopy[axis];
+    if (superExpo) {
+        const float rcSuperfactor = 1.0f / (constrainf(1.0f - (rcCommandfAbs * superExpo), 0.01f, 1.00f));
+        angleRate *= rcSuperfactor;
+    }
+
+    return constrainf(angleRate, -SETPOINT_RATE_LIMIT, SETPOINT_RATE_LIMIT) * (float) DEGTORAD;
+}
+
 void control( void)
 {	
 
@@ -119,9 +168,9 @@ float rate_multiplier = 1.0;
 	for ( int i = 0 ; i < 3 ; i++)
 	{
 		#ifdef STOCK_TX_AUTOCENTER
-		rxcopy[i] = (rx[i] - autocenter[i])* rate_multiplier;
+		rxcopy[i] = (rx[i] - autocenter[i]);
 		#else
-		rxcopy[i] = rx[i] * rate_multiplier;
+		rxcopy[i] = rx[i];
 		#endif
 		#ifdef STICKS_DEADBAND
 		if ( fabsf( rxcopy[ i ] ) <= STICKS_DEADBAND ) {
@@ -167,12 +216,15 @@ pid_precalc();
 	  }
 	else
 	  {	// rate mode
-
-		  error[0] = rxcopy[0] * (float) MAX_RATE * DEGTORAD  - gyro[0];
-		  error[1] = rxcopy[1] * (float) MAX_RATE * DEGTORAD  - gyro[1];
-
-          error[2] = rxcopy[2] * (float) MAX_RATEYAW * DEGTORAD  - gyro[2];
-
+          #ifndef BETAFLIGHT_RATES
+          error[0] = rate_multiplier * rxcopy[0] * (float) MAX_RATE * DEGTORAD  - gyro[0];
+          error[1] = rate_multiplier * rxcopy[1] * (float) MAX_RATE * DEGTORAD  - gyro[1];
+          error[2] = rate_multiplier * rxcopy[2] * (float) MAX_RATEYAW * DEGTORAD  - gyro[2];
+          #else
+          error[0] = rate_multiplier * calcBFRatesRad(0)  - gyro[0];
+          error[1] = rate_multiplier * calcBFRatesRad(1)  - gyro[1];
+          error[2] = rate_multiplier * calcBFRatesRad(2)  - gyro[2];
+          #endif
 	  }
 
 
