@@ -33,9 +33,9 @@
 // *************EXPO from 0.00 to 1.00 , 0 = no exp
 // *************positive = less sensitive near center 
 #define DISABLE_EXPO
-#define ACRO_EXPO_ROLL 0.0
-#define ACRO_EXPO_PITCH 0.0
-#define ACRO_EXPO_YAW 0.0
+#define ACRO_EXPO_ROLL 0.2
+#define ACRO_EXPO_PITCH 0.2
+#define ACRO_EXPO_YAW 0.2
 
 #define ANGLE_EXPO_ROLL 0.0
 #define ANGLE_EXPO_PITCH 0.0

@@ -27,3 +27,5 @@ IF "%EXT%"==".bin" (
 ) ELSE (
   echo File with this extension cannot be flashed - %FILE%
 )
+
+pause

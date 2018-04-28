@@ -9,6 +9,8 @@ REM *    http://www.keil.com/support/man/docs/armlink/armlink_pge1362075395210.h
 REM *    http://www.keil.com/support/man/docs/armasm/armasm_dom1361289815333.htm
 REM * Created by Phobos
 
+echo Building SilverWare...
+
 SET OBJDIR=.\silverware\objects
 SET KEILDIR=.\armcc\bin
 
@@ -47,3 +49,5 @@ for /f "usebackq TOKENS=*" %%a in (`dir /b %OBJDIR%\*.o 2^>nul`) do set objList=
 %KEILDIR%\fromelf %OBJDIR%\%UV2_TARGET%.axf --i32combined --output .\%UV2_TARGET%.hex
 
 rmdir /s /q %OBJDIR%
+
+pause
