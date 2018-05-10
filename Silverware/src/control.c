@@ -41,6 +41,16 @@ THE SOFTWARE.
 #include "led.h"
 
 
+
+float	throttle;
+int idle_state;
+extern int armed_state;
+extern int in_air;
+extern int arming_release;
+extern int binding_while_armed;
+extern int rx_ready;
+extern int rx_state;
+
 extern float rx[];
 extern float gyro[3];
 extern int failsafe;
@@ -109,15 +119,15 @@ static float calcBFRatesRad(int axis)
 {
     float rcRate, rcExpo, superExpo;
     if (axis == ROLL) {
-        rcExpo = (float) ACRO_EXPO_ROLL;
+        rcExpo = (float) RC_EXPO_ROLL;
         rcRate = (float) RC_RATE_ROLL;
         superExpo = (float) SUPER_EXPO_ROLL;
     } else if (axis == PITCH) {
-		rcExpo = (float) ACRO_EXPO_PITCH;
+		rcExpo = (float) RC_EXPO_PITCH;
         rcRate = (float) RC_RATE_PITCH;
         superExpo = (float) SUPER_EXPO_PITCH;
 	} else {
-        rcExpo = (float) ACRO_EXPO_YAW;
+        rcExpo = (float) RC_EXPO_YAW;
         rcRate = (float) RC_RATE_YAW;
         superExpo = (float) SUPER_EXPO_YAW;
     }
@@ -245,16 +255,26 @@ pid_precalc();
 #endif
 
 
-float	throttle;
-int armed_state;
-int idle_state;
+#ifndef THROTTLE_SAFETY
+	#define THROTTLE_SAFETY .15f
+#endif
+
 		
 #ifndef ARMING
- armed_state = 1;
-#else
-	if (!aux[ARMING]){
-		armed_state = 0;
-	}else{ armed_state = 1;}
+ armed_state = 1;																							 									 // if arming feature is disabled - quad is always armed
+#else																												  											// CONDITION: arming feature is enabled
+	if (!aux[ARMING]){																					 										  // 						CONDITION: switch is DISARMED
+		armed_state = 0;																															  // 												disarm the quad by setting armed state variable to zero
+		if ((rx_ready == 1) && (rx_state ==1))	binding_while_armed = 0;																		//                        rx is bound and has been disarmed so clear binding while armed flag
+	}else{ 																				   						  										// 						CONDITION: switch is ARMED
+		if (((rx[3] > THROTTLE_SAFETY) && (arming_release == 0)) || (binding_while_armed == 1)){ 		//				   CONDITION: (throttle is above safety limit and ARMING RELEASE FLAG IS NOT CLEARED) OR (bind just took place with transmitter armed)		
+			armed_state = 0;																				 										  //                         	 				override to disarmed state and rapid blink the leds
+		  ledcommand = 1;
+		}else{																									  										  //            					 CONDITION: quad is being armed in a safe state 																		
+			armed_state = 1;                                        										  //                      					  arm the quad by setting armed state variable to 1
+		  arming_release = 1;																														//                       						clear the arming release flag - the arming release flag being cleared
+		}																													 										  //											 						is what stops the quad from automatically disarming again the next time
+	}																																									//											 						throttle is raised above the safety limit
 #endif
 
 #ifndef IDLE_UP
@@ -269,16 +289,33 @@ int idle_state;
 	#define IDLE_THR .05f
 #endif
 
-if (armed_state == 0){
-	throttle = 0;
-}else{
-	if (idle_state == 0){
-		if ( rx[3] < 0.05f ) throttle = 0;
-		else throttle = (rx[3] - 0.05f)*1.05623158f;
-	}else{
-		throttle =  (float) IDLE_THR + rx[3] * (1.0f - (float) IDLE_THR);
+	if (armed_state == 0){                                     												// CONDITION: armed state variable is 0 so quad is DISARMED					
+		throttle = 0;																																		//						override throttle to 0
+		in_air = 0;																																			//						flag in air variable as NOT IN THE AIR for mix throttle increase safety
+		arming_release = 0;																															//						arming release flag is set to not cleared to reactivate the throttle safety limit for the next arming event
+	
+	}else{                                                    	  										// CONDITION: armed state variable is 1 so quad is ARMED							 
+			if (idle_state == 0){                                     										//            CONDITION: idle up is turned OFF				
+				if ( rx[3] < 0.05f ){
+					throttle = 0;                      																				//   											set a small dead zone where throttle is zero and
+				  in_air = 0;																																//												deactivate mix increase 3 since throttle is off
+				}else{ 
+					throttle = (rx[3] - 0.05f)*1.05623158f;            												//                        map the remainder of the the active throttle region to 100%
+					in_air = 1;}																															//												activate mix increase since throttle is on
+			}else{ 																																				//						CONDITION: idle up is turned ON												
+				throttle =  (float) IDLE_THR + rx[3] * (1.0f - (float) IDLE_THR);						//            						throttle range is mapped from idle throttle value to 100%							  
+				if ((rx[3] > THROTTLE_SAFETY) && (in_air == 0)) in_air = 1; 			  				//            						change the state of in air flag when first crossing the throttle 
+			}																																							//            						safety value to indicate craft has taken off for mix increase safety
 	}
+
+#ifdef STICK_TRAVEL_CHECK																				//This feature completely disables throttle and allows visual feedback if control inputs reach full throws
+//Stick endpoints check tied to aux channel stick gesture
+if (aux[CH_AUX1]){
+	throttle = 0;
+	if ((rx[0]<= -0.99f) || (rx[0] >= 0.99f) || (rx[1] <= -0.99f) || (rx[1] >= 0.99f) || (rx[2] <= -0.99f) || (rx[2] >= 0.99f) || (rx[3] <= 0.0f) || (rx[3] >= 0.99f)){
+		ledcommand = 1;}
 }
+#endif
 
 
 
@@ -626,27 +663,28 @@ if ( overthrottle > 0.1f) ledcommand = 1;
 #ifndef MIX_THROTTLE_INCREASE_MAX
 #define MIX_THROTTLE_INCREASE_MAX 0.2f
 #endif
+	if (in_air == 1){
+		float underthrottle = 0;
 
-float underthrottle = 0;
-
-for (int i = 0; i < 4; i++)
-    {
-        if (mix[i] < underthrottle)
-            underthrottle = mix[i];
-    }
+		for (int i = 0; i < 4; i++)
+			{
+					if (mix[i] < underthrottle)
+							underthrottle = mix[i];
+			}
 
 
-// limit to half throttle max reduction
-if ( underthrottle < -(float) MIX_THROTTLE_INCREASE_MAX)  underthrottle = -(float) MIX_THROTTLE_INCREASE_MAX;
+		// limit to half throttle max reduction
+		if ( underthrottle < -(float) MIX_THROTTLE_INCREASE_MAX)  underthrottle = -(float) MIX_THROTTLE_INCREASE_MAX;
 
-if ( underthrottle < 0.0f)
-    {
-        for ( int i = 0 ; i < 4 ; i++)
+		if ( underthrottle < 0.0f)
+			{
+					for ( int i = 0 ; i < 4 ; i++)
             mix[i] -= underthrottle;
-    }
-#ifdef MIX_THROTTLE_FLASHLED
-if ( underthrottle < -0.01f) ledcommand = 1;
-#endif
+			}
+		#ifdef MIX_THROTTLE_FLASHLED
+			if ( underthrottle < -0.01f) ledcommand = 1;
+		#endif
+	}
 }
 #endif
 

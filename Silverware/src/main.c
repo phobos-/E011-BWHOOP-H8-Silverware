@@ -117,6 +117,11 @@ extern int rxmode;
 extern int failsafe;
 extern float hardcoded_pid_identifier;
 extern int onground;
+int in_air;
+int armed_state;
+int arming_release;
+int binding_while_armed = 1;
+int rx_ready = 0;
 
 // for led flash on gestures
 int ledcommand = 0;
@@ -141,7 +146,7 @@ clk_init();
 #endif
 	
   gpio_init();	
-	
+  ledon(255);									//Turn on LED during boot so that if a delay is used as part of using programming pins for other functions, the FC does not appear inactive while programming times out
 	spi_init();
 	
   time_init();
@@ -415,7 +420,7 @@ if ( LED_NUMBER > 0)
                     ledflash ( 500000, 15);			
                 }
             else 
-            {
+            {   rx_ready = 1;
                 int leds_on = aux[LEDS_ON];
                 if (ledcommand)
                 {
