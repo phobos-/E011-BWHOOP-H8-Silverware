@@ -89,9 +89,9 @@
 //*************channel is on, or racemodeHORIZON if both channels are on - and will be standard LEVELMODE if neither 
 //*************racemode or horizon are switched on.
 #define LEVELMODE CHAN_6
-#define RACEMODE  CHAN_7
-#define HORIZON   CHAN_8
-#define RATES CHAN_ON
+#define RACEMODE  CHAN_OFF
+#define HORIZON   CHAN_7
+#define RATES CHAN_8
 #define LEDS_ON CHAN_ON
 
 
