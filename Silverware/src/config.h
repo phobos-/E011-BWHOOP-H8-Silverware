@@ -65,15 +65,15 @@
 #define ANGLE_EXPO_PITCH 0.0
 #define ANGLE_EXPO_YAW 0.55
 
-#define RC_RATE_ROLL 1.29 //860
-#define RC_RATE_PITCH 1.29 //860
-#define RC_RATE_YAW 1.25 //500
-#define RC_EXPO_ROLL 0.2
-#define RC_EXPO_PITCH 0.2
-#define RC_EXPO_YAW 0.2
-#define SUPER_EXPO_ROLL 0.7
-#define SUPER_EXPO_PITCH 0.7
-#define SUPER_EXPO_YAW 0.5
+#define RC_RATE_ROLL 0.80
+#define RC_RATE_PITCH 0.80
+#define RC_RATE_YAW 0.60
+#define RC_EXPO_ROLL 0.0
+#define RC_EXPO_PITCH 0.0
+#define RC_EXPO_YAW 0.0
+#define SUPER_EXPO_ROLL 0.62
+#define SUPER_EXPO_PITCH 0.62
+#define SUPER_EXPO_YAW 0.54
 #define BETAFLIGHT_RATES
 
 // *************transmitter stick adjustable deadband for roll/pitch/yaw
@@ -115,7 +115,7 @@
 #define LEVELMODE CHAN_6
 #define RACEMODE  CHAN_OFF
 #define HORIZON   CHAN_7
-#define RATES CHAN_8
+#define RATES CHAN_ON
 #define LEDS_ON CHAN_ON
 
 // *************switch for fpv / other, requires fet
@@ -249,7 +249,7 @@
 #define MIX_THROTTLE_INCREASE_MAX 1.0f
 
 // *************invert yaw pid for "PROPS OUT" configuration
-//#define INVERT_YAW_PID
+#define INVERT_YAW_PID
 
 //**************joelucid's yaw fix
 #define YAW_FIX
