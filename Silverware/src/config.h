@@ -19,28 +19,6 @@
 
 
 //**********************************************************************************************************************
-//***********************************************BETA TESTING ON STICK GESTURE******************************************
-// *************DEFINE ONLY ONE OPTION FROM THIS SECTION!!!
-// *************This is a new section that will allow certain beta testing features to be activated by the stick gesture
-// *************auxillary channel.  Even when defined - the quad will power up with these features off.  To activate -  
-// *************use the following stick gesture on the pitch/roll stick RIGHT-RIGHT-DOWN (leds will blink). To deactivate - 
-// *************stick gesture LEFT-LEFT-DOWN.  Please test the features you are interested in below and give feedback!!!
-
-// *************SPECIAL TEST MODE TO CHECK TRANSMITTER STICK THROWS
-// *************This define will allow you to check if your radio is reaching 100% throws entering <RIGHT-RIGHT-DOWN> gesture
-// ************* will disable throttle and will rapid blink the led when sticks are moved to 100% throws
-// *************entering <LEFT-LEFT-DOWN> will return the quad to normal operation.
-//#define STICK_TRAVEL_CHECK
-
-// *************SPECIAL TEST MODE TO CHANGE D TERM CALCULATION TO ERROR INSTEAD OF MEASUREMENT
-// *************This define will enable you to change the calculation of the PID's D term to track both sticks and gyro (error method)
-// *************instead of just gyro (measurement method).  The quad will start up using the measurement calculation.  Entering 
-// *************RIGHT-RIGHT-DOWN will change over to the error type D calculation.  LEFT-LEFT-DOWN will change back to measurement.
-//#define ERROR_D_TERM
-
-
-
-//**********************************************************************************************************************
 //***********************************************RECEIVER SETTINGS******************************************************
 
 // *************rate in deg/sec
@@ -49,10 +27,10 @@
 #define MAX_RATEYAW 500.0
 
 // *************max angle for level mode
-#define MAX_ANGLE_HI 65.0f
+#define LEVEL_MAX_ANGLE 65.0f
 
 // ************* low rates multiplier if rates are assigned to a channel
-#define LOW_RATES_MULTI 0.5f
+#define LOW_RATES_MULTI 1.0f
 
 // *************EXPO from 0.00 to 1.00 , 0 = no exp
 // *************positive = less sensitive near center 
@@ -62,18 +40,18 @@
 #define ACRO_EXPO_YAW 0.60
 
 #define ANGLE_EXPO_ROLL 0.55
-#define ANGLE_EXPO_PITCH 0.0
+#define ANGLE_EXPO_PITCH 0.55
 #define ANGLE_EXPO_YAW 0.55
 
 #define RC_RATE_ROLL 0.80
 #define RC_RATE_PITCH 0.80
-#define RC_RATE_YAW 0.60
+#define RC_RATE_YAW 0.80
 #define RC_EXPO_ROLL 0.0
 #define RC_EXPO_PITCH 0.0
 #define RC_EXPO_YAW 0.0
 #define SUPER_EXPO_ROLL 0.62
 #define SUPER_EXPO_PITCH 0.62
-#define SUPER_EXPO_YAW 0.54
+#define SUPER_EXPO_YAW 0.45
 #define BETAFLIGHT_RATES
 
 // *************transmitter stick adjustable deadband for roll/pitch/yaw
@@ -112,9 +90,10 @@
 #define ARMING CHAN_5
 #define IDLE_UP CHAN_5
 #define IDLE_THR 0.05f                   //This designates an idle throttle of 5%
-#define LEVELMODE CHAN_6
+#define LEVELMODE CHAN_OFF
 #define RACEMODE  CHAN_OFF
-#define HORIZON   CHAN_7
+#define HORIZON   CHAN_OFF
+#define PIDPROFILE CHAN_OFF
 #define RATES CHAN_ON
 #define LEDS_ON CHAN_ON
 
@@ -139,27 +118,30 @@
 //**********************************************************************************************************************
 //***********************************************VOLTAGE SETTINGS*******************************************************
 
-// *************battery saver
-// *************do not start software if battery is too low
-// *************flashes 2 times repeatedly at startup
-//#define STOP_LOWBATTERY
-
-// *************voltage to start warning
-#define VBATTLOW 3.5
+// ************* Raises pids automatically as battery voltage drops in flight.
+#define PID_VOLTAGE_COMPENSATION
+#define LEVELMODE_PID_ATTENUATION 0.90f  //used to prevent oscillations in angle modes with pid_voltage_compensation enabled due to high pids
 
 // *************compensation for battery voltage vs throttle drop
 #define VDROP_FACTOR 0.7
 // *************calculate above factor automatically
 #define AUTO_VDROP_FACTOR
 
-// *************voltage hysteresys in volts
-#define HYST 0.10
-
-// *************lower throttle when battery below treshold - forced landing low voltage cutoff
+// *************lower throttle when battery below threshold - forced landing low voltage cutoff
 //#define LVC_LOWER_THROTTLE
 #define LVC_LOWER_THROTTLE_VOLTAGE 3.30
 #define LVC_LOWER_THROTTLE_VOLTAGE_RAW 2.70
 #define LVC_LOWER_THROTTLE_KP 3.0
+
+// *************do not start software if battery is too low
+// *************flashes 2 times repeatedly at startup
+//#define STOP_LOWBATTERY
+
+// *************voltage to start warning led blinking
+#define VBATTLOW 3.5
+
+// *************voltage hysteresis in volts
+#define HYST 0.10
 
 // *************automatic voltage telemetry correction/calibration factor - change the values below if voltage telemetry is inaccurate
 #define ACTUAL_BATTERY_VOLTAGE 4.20
@@ -174,8 +156,8 @@
 // *************If your throttle does not want to drop crisply and quickly when you lower the throttle stick, then move to a stronger filter set
 
 //#define WEAK_FILTERING
-#define STRONG_FILTERING
-//#define VERY_STRONG_FILTERING
+//#define STRONG_FILTERING
+#define VERY_STRONG_FILTERING
 //#define CUSTOM_FILTERING
 
 
@@ -244,9 +226,9 @@
 
 //#define MIX_LOWER_THROTTLE_3
 #define MIX_INCREASE_THROTTLE_3
-//Currently eperimenting with the value below for whoop format.  Default was previously .2f and should be
-//changed back for anything other than a whoop.  This gives "airmode" 100% authority over throttle
-#define MIX_THROTTLE_INCREASE_MAX 1.0f
+//Currently eperimenting with the value 1.0f below for whoop format.  Default was previously .2f and should remain .2f
+//for anything other than a whoop.  The value 1.0f gives "airmode" 100% authority over throttle and is AWESOME on a whoop for locked in dives!!
+#define MIX_THROTTLE_INCREASE_MAX 0.2f
 
 // *************invert yaw pid for "PROPS OUT" configuration
 #define INVERT_YAW_PID
@@ -254,14 +236,16 @@
 //**************joelucid's yaw fix
 #define YAW_FIX
 
+//**************joelucid's transient windup protection.  Removes roll and pitch bounce back after flips
+#define TRANSIENT_WINDUP_PROTECTION
+
 
 
 //**********************************************************************************************************************
 //***********************************************ADDITIONAL FEATURES****************************************************
 
-// *************lost quad beeps using motors (30 sec timeout)
+// *************lost quad beeps using motors (30 sec timeout) - pulses motors after timeout period to help find a lost model
 //#define MOTOR_BEEPS
-
 
 // *************0 - 7 - power for telemetry
 #define TX_POWER 7
@@ -283,12 +267,15 @@
 #define FLASH_SAVE1
 //#define FLASH_SAVE2
 
-
-// enable inverted flight code ( brushless only )
+// *************enable inverted flight code ( brushless only )
 //#define INVERTED_ENABLE
 //#define FN_INVERTED CH_OFF //for brushless only
 
-
+// *************SPECIAL TEST MODE TO CHECK TRANSMITTER STICK THROWS
+// *************This define will allow you to check if your radio is reaching 100% throws entering <RIGHT-RIGHT-DOWN> gesture
+// ************* will disable throttle and will rapid blink the led when sticks are moved to 100% throws
+// *************entering <LEFT-LEFT-DOWN> will return the quad to normal operation.
+//#define STICK_TRAVEL_CHECK
 
 
 
@@ -301,6 +288,8 @@
 //#############################################################################################################################
 //#############################################################################################################################
 
+//enables use of stick accelerator and stick transition for d term lpf 1 & 2
+#define ADVANCED_PID_CONTROLLER
 
 //Throttle must drop below this value if arming feature is enabled for arming to take place.  MIX_INCREASE_THROTTLE_3 if enabled
 //will also not activate on the ground untill this threshold is passed during takeoff for safety and better staging behavior.
@@ -319,8 +308,6 @@
 #define MOTOR_MIN_ENABLE
 #define MOTOR_MIN_VALUE 0.05
 
-// disable inbuilt expo functions
-//#define DISABLE_EXPO
 
 #ifdef WEAK_FILTERING
 #define SOFT_KALMAN_GYRO KAL1_HZ_90
@@ -654,8 +641,25 @@
 
 
 // MOTOR PINS
+// MOTOR PINS
 #define MOTOR0_PIN_PA7
-#define MOTOR1_PIN_PA4
-#define MOTOR2_PIN_PB1
+//#define MOTOR1_PIN_PA4  //2nd Draft prototype patch
+//#define MOTOR2_PIN_PB1  //2nd Draft prototype patch
+#define MOTOR1_PIN_PB1
+#define MOTOR2_PIN_PA4
 #define MOTOR3_PIN_PA6
 #endif
+
+
+//WARNING WARNING WARNING - THIS FEATURE IS BROKEN.
+//#define FEED_FORWARD_STRENGTH 5.0f
+
+
+//**********************************************************************************************************************
+//***********************************************BETA TESTING ON STICK GESTURE******************************************
+// *************DEFINE ONLY ONE OPTION FROM THIS SECTION!!!
+// *************This is a new section that will allow certain beta testing features to be activated by the stick gesture
+// *************auxillary channel.  Even when defined - the quad will power up with these features off.  To activate -  
+// *************use the following stick gesture on the pitch/roll stick RIGHT-RIGHT-DOWN (leds will blink). To deactivate - 
+// *************stick gesture LEFT-LEFT-DOWN.  Please test the features you are interested in below and give feedback!!!
+
