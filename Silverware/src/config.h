@@ -92,7 +92,7 @@
 #define LEVELMODE CHAN_OFF
 #define RACEMODE  CHAN_OFF
 #define HORIZON   CHAN_OFF
-#define PIDPROFILE CHAN_OFF
+#define PIDPROFILE CHAN_OFF              //For switching stickAccelerator & stickTransition profiles on pid.c page
 #define RATES CHAN_ON
 #define LEDS_ON CHAN_ON
 
@@ -172,7 +172,6 @@
 // *************1st order adjustable, second order adjustable, or 3rd order fixed (non adjustable)
 //#define DTERM_LPF_1ST_HZ 100
 #define  DTERM_LPF_2ND_HZ 100
-//#define DTERM_LPF3_88    //non adjustable
 
 // *************enable motor output filter - select and adjust frequency
 //#define MOTOR_FILTER2_ALPHA MFILT1_HZ_90
@@ -648,10 +647,6 @@
 #define MOTOR2_PIN_PA4
 #define MOTOR3_PIN_PA6
 #endif
-
-
-//WARNING WARNING WARNING - THIS FEATURE IS BROKEN.
-//#define FEED_FORWARD_STRENGTH 5.0f
 
 
 //**********************************************************************************************************************
