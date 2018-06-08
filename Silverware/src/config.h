@@ -23,8 +23,8 @@
 
 // *************rate in deg/sec
 // *************for acro mode
-#define MAX_RATE 860.0
-#define MAX_RATEYAW 500.0
+#define MAX_RATE 420.0
+#define MAX_RATEYAW 290.0
 
 // *************max angle for level mode
 #define LEVEL_MAX_ANGLE 65.0f
@@ -34,14 +34,13 @@
 
 // *************EXPO from 0.00 to 1.00 , 0 = no exp
 // *************positive = less sensitive near center 
-#define DISABLE_EXPO
-#define ACRO_EXPO_ROLL 0.80
-#define ACRO_EXPO_PITCH 0.80
-#define ACRO_EXPO_YAW 0.60
+#define ACRO_EXPO_ROLL 0.0
+#define ACRO_EXPO_PITCH 0.0
+#define ACRO_EXPO_YAW 0.0
 
-#define ANGLE_EXPO_ROLL 0.55
-#define ANGLE_EXPO_PITCH 0.55
-#define ANGLE_EXPO_YAW 0.55
+#define ANGLE_EXPO_ROLL 0.0
+#define ANGLE_EXPO_PITCH 0.0
+#define ANGLE_EXPO_YAW 0.0
 
 #define RC_RATE_ROLL 0.80
 #define RC_RATE_PITCH 0.80

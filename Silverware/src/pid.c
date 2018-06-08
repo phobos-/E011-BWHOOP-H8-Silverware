@@ -38,11 +38,11 @@ THE SOFTWARE.
 
 
 //pid profile A											 Roll  PITCH  YAW
-float stickAcceleratorProfileA[3] = { 1.0 , 1.0 , 1.0};
+float stickAcceleratorProfileA[3] = { 0.8 , 0.8 , 0.8};
 float stickTransitionProfileA[3]  = { 0.0 , 0.0 , 0.0}; 
 
 //pid profile B											 Roll  PITCH  YAW
-float stickAcceleratorProfileB[3] = { 1.0 , 1.0 , 1.0};
+float stickAcceleratorProfileB[3] = { 0.8 , 0.8 , 0.8};
 float stickTransitionProfileB[3]  = { 0.0 , 0.0 , 0.0}; 
 
 
