@@ -183,21 +183,15 @@
 //**********************************************************************************************************************
 //***********************************************MOTOR OUTPUT SETTINGS**************************************************
 
+// *************invert yaw pid for "PROPS OUT" configuration
+//#define INVERT_YAW_PID
+
 // *************pwm frequency for motor control
 // *************a higher frequency makes the motors more linear
 // *************in Hz
 #define PWMFREQ 32000
 
-// *************motor curve to use - select one
-// *************the pwm frequency has to be set independently
-#define MOTOR_CURVE_NONE
-//#define MOTOR_CURVE_6MM_490HZ
-//#define MOTOR_CURVE_85MM_8KHZ
-//#define MOTOR_CURVE_85MM_32KHZ
-//#define BOLDCLASH_716MM_8K
-//#define BOLDCLASH_716MM_24K
-
-// *************clip feedforward attempts to resolve issues that occur near full throttle
+// *************clip feedforward attempts to resolve issues that occur near full throttle by adding any clipped motor commands to the next loop output
 //#define CLIP_FF
 
 // *************torque boost is a highly eperimental feature.  it is a lpf D term on motor outputs that will accelerate the response
@@ -210,7 +204,7 @@
 
 // *************makes throttle feel more poppy - can intensify small throttle imbalances visible in FPV if factor is set too high
 //#define THROTTLE_TRANSIENT_COMPENSATION 
-#define THROTTLE_TRANSIENT_COMPENSATION_FACTOR 4.0 
+//#define THROTTLE_TRANSIENT_COMPENSATION_FACTOR 4.0 
  
 // *************throttle angle compensation in level mode
 //#define AUTO_THROTTLE
@@ -224,8 +218,6 @@
 
 //#define MIX_LOWER_THROTTLE_3
 #define MIX_INCREASE_THROTTLE_3
-//Currently eperimenting with the value 1.0f below for whoop format.  Default was previously .2f and should remain .2f
-//for anything other than a whoop.  The value 1.0f gives "airmode" 100% authority over throttle and is AWESOME on a whoop for locked in dives!!
 #define MIX_THROTTLE_INCREASE_MAX 0.2f
 
 // *************invert yaw pid for "PROPS OUT" configuration
@@ -338,6 +330,10 @@
 
 // throttle direct to motors for thrust measure as a flight mode
 //#define MOTORS_TO_THROTTLE_MODE MULTI_CHAN_8
+
+// *************motor curve to use - select one
+// *************the pwm frequency has to be set independently
+#define MOTOR_CURVE_NONE
 
 // loop time in uS
 // this affects soft gyro lpf frequency if used
