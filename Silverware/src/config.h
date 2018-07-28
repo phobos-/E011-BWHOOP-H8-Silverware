@@ -66,6 +66,8 @@
 //#define RX_BAYANG_BLE_APP
 //#define RX_NRF24_BAYANG_TELEMETRY
 //#define RX_SBUS
+//#define RX_DSMX_2048
+//#define RX_DSM2_1024
 
 // *************Transmitter Type Selection
 //#define USE_STOCK_TX
@@ -94,7 +96,7 @@
 #define HORIZON   CHAN_OFF
 #define PIDPROFILE CHAN_OFF              //For switching stickAccelerator & stickTransition profiles on pid.c page
 #define RATES CHAN_ON
-#define LEDS_ON CHAN_ON
+#define LEDS_ON !CHAN_10
 
 // *************switch for fpv / other, requires fet
 // *************comment out to disable
@@ -164,8 +166,8 @@
 // *************gyro low pass filter ( iir )
 // *************set only one below - kalman, 1st order, or second order - and adjust frequency
 //**************ABOVE 100 ADJUST IN INCRIMENTS OF 20, BELOW 100 ADJUST IN INCRIMENTS OF 10
-#define SOFT_KALMAN_GYRO KAL1_HZ_90
-//#define SOFT_LPF_1ST_HZ 80
+//#define SOFT_KALMAN_GYRO KAL1_HZ_70
+#define SOFT_LPF_1ST_HZ 80
 //#define SOFT_LPF_2ND_HZ 80
 
 // *************D term low pass filter type - set only one below and adjust frequency if adjustable filter is used
@@ -174,17 +176,16 @@
 #define  DTERM_LPF_2ND_HZ 100
 
 // *************enable motor output filter - select and adjust frequency
-//#define MOTOR_FILTER2_ALPHA MFILT1_HZ_90
-#define MOTOR_KAL KAL1_HZ_70
+#define MOTOR_FILTER2_ALPHA MFILT1_HZ_90
+//#define MOTOR_KAL KAL1_HZ_70
 #endif
-
 
 
 //**********************************************************************************************************************
 //***********************************************MOTOR OUTPUT SETTINGS**************************************************
 
 // *************invert yaw pid for "PROPS OUT" configuration
-//#define INVERT_YAW_PID
+#define INVERT_YAW_PID
 
 // *************pwm frequency for motor control
 // *************a higher frequency makes the motors more linear
@@ -268,7 +269,11 @@
 //#define STICK_TRAVEL_CHECK
 
 
-
+//#define SWITCHABLE_FEATURE_1
+#ifdef SWITCHABLE_FEATURE_1
+//linked to gesture RRR & saved to flash with DDD
+//toggles state of variable int flash_feature_1
+#endif
 
 
 //#############################################################################################################################
@@ -412,7 +417,8 @@
 #define SENSOR_ROTATE_90_CW
 
 // SPI PINS DEFINITONS & RADIO
-#ifdef RX_SBUS
+#if defined(RX_SBUS) || defined(RX_DSMX_2048) || defined(RX_DSM2_1024)
+#define SERIAL_RX_SPEKBIND_PIN GPIO_Pin_3
 #define SERIAL_RX_PIN GPIO_Pin_14
 #define SERIAL_RX_PORT GPIOA
 #define SERIAL_RX_SOURCE GPIO_PinSource14
@@ -476,7 +482,8 @@
 #define SOFTI2C_PUSHPULL_CLK
 
 // SPI PINS DEFINITONS & RADIO
-#ifdef RX_SBUS
+#if defined(RX_SBUS) || defined(RX_DSMX_2048) || defined(RX_DSM2_1024)
+#define SERIAL_RX_SPEKBIND_PIN GPIO_Pin_3
 #define SERIAL_RX_PIN GPIO_Pin_14
 #define SERIAL_RX_PORT GPIOA
 #define SERIAL_RX_SOURCE GPIO_PinSource14
@@ -538,7 +545,8 @@
 #define SENSOR_ROTATE_180
 
 // SPI PINS DEFINITONS & RADIO
-#ifdef RX_SBUS
+#if defined(RX_SBUS) || defined(RX_DSMX_2048) || defined(RX_DSM2_1024)
+#define SERIAL_RX_SPEKBIND_PIN GPIO_Pin_3
 #define SERIAL_RX_PIN GPIO_Pin_14
 #define SERIAL_RX_PORT GPIOA
 #define SERIAL_RX_SOURCE GPIO_PinSource14
@@ -600,7 +608,8 @@
 #define SENSOR_ROTATE_90_CCW
 
 // SPI PINS DEFINITONS & RADIO
-#ifdef RX_SBUS
+#if defined(RX_SBUS) || defined(RX_DSMX_2048) || defined(RX_DSM2_1024)
+#define SERIAL_RX_SPEKBIND_PIN GPIO_Pin_2
 #define SERIAL_RX_PIN GPIO_Pin_3
 #define SERIAL_RX_PORT GPIOA
 #define SERIAL_RX_SOURCE GPIO_PinSource3

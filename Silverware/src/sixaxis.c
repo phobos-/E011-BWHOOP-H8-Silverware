@@ -477,6 +477,7 @@ void acc_cal(void)
 
 	  }
 	accelcal[2] -= 2048;
+		
 
 #ifdef FLASH_SAVE2
 	for (int x = 0; x < 3; x++)
@@ -491,6 +492,7 @@ void acc_cal(void)
 		  limitf(&accelcal[x], 500);
 	  }
 #endif
+		
 }
 
 

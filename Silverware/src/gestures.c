@@ -5,6 +5,7 @@
 #include "config.h"
 #include "pid.h"
 
+
 extern int ledcommand;
 extern int ledblink;
 extern int onground;
@@ -20,11 +21,11 @@ void gestures( void)
 		if (command!=GESTURE_NONE)
         {
             if (command == GESTURE_DDD)
-		    {
+		    { 
 			                  
                 //skip accel calibration if pid gestures used
                 if ( !pid_gestures_used )
-                {
+                { 
                     gyro_cal();	// for flashing lights
                     acc_cal();                   
                 }
@@ -39,9 +40,9 @@ void gestures( void)
                 #endif
                 
                 #ifdef FLASH_SAVE1
-			    extern void flash_save( void);
+								extern void flash_save( void);
                 extern void flash_load( void);
-                flash_save( );
+								flash_save( );
                 flash_load( );
                 // reset flash numbers
                 extern int number_of_increments[3][3];
@@ -52,6 +53,7 @@ void gestures( void)
 			    // reset loop time 
 			    extern unsigned long lastlooptime;
 			    lastlooptime = gettime();
+						
 		    }		
             if (command == GESTURE_UUU)
               {
@@ -61,6 +63,16 @@ void gestures( void)
                  ledblink = 2 - rx_bind_enable;
                  pid_gestures_used = 1;  
                  #endif
+              }    
+			
+            if (command == GESTURE_RRR)
+              {								
+								 #ifdef SWITCHABLE_FEATURE_1
+                 extern int flash_feature_1;
+                 flash_feature_1=!flash_feature_1;
+                 ledblink = 2 - flash_feature_1;
+                 pid_gestures_used = 1;								 
+								 #endif
               }
               
             if (command == GESTURE_RRD)

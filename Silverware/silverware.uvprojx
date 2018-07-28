@@ -506,21 +506,6 @@
               <FilePath>.\src\rx_nrf24_bayang_telemetry.c</FilePath>
             </File>
             <File>
-              <FileName>rx_cg023_protocol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\rx_cg023_protocol.c</FilePath>
-            </File>
-            <File>
-              <FileName>rx_h7_protocol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\rx_h7_protocol.c</FilePath>
-            </File>
-            <File>
-              <FileName>rx_cx10blue_protocol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\rx_cx10blue_protocol.c</FilePath>
-            </File>
-            <File>
               <FileName>rx_sbus.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\rx_sbus.c</FilePath>
@@ -624,6 +609,11 @@
               <FileName>rx_bayang_protocol_telemetry_autobind.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\rx_bayang_protocol_telemetry_autobind.c</FilePath>
+            </File>
+            <File>
+              <FileName>rx_dsm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\rx_dsm.c</FilePath>
             </File>
           </Files>
         </Group>
