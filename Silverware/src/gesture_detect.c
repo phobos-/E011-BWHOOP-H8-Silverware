@@ -35,6 +35,17 @@
 
 #define GSIZE 7
 
+// L L L
+const uint8_t command11[GSIZE] = {
+//	GESTURE_CENTER_IDLE, GESTURE_DOWN, GESTURE_CENTER, GESTURE_UP, GESTURE_CENTER, GESTURE_DOWN, GESTURE_CENTER
+	GESTURE_CENTER_IDLE, GESTURE_DOWN, GESTURE_CENTER, GESTURE_UP, GESTURE_CENTER, GESTURE_DOWN, GESTURE_CENTER
+};
+
+// L L L
+const uint8_t command10[GSIZE] = {
+//	GESTURE_CENTER_IDLE, GESTURE_DOWN, GESTURE_CENTER, GESTURE_UP, GESTURE_CENTER, GESTURE_DOWN, GESTURE_CENTER
+	GESTURE_CENTER_IDLE, GESTURE_LEFT, GESTURE_CENTER, GESTURE_LEFT, GESTURE_CENTER, GESTURE_LEFT, GESTURE_CENTER
+};
 
 // R R R
 const uint8_t command9[GSIZE] = {
@@ -244,6 +255,27 @@ int gesture_sequence(int currentgesture)
 			    gbuffer[1] = GESTURE_OTHER;
 			    return GESTURE_RRR;
 		    }				
+				
+				    if (check_command ( &gbuffer[0] , &command10[0] ))
+		    {
+			    // command 10
+
+			    //change buffer so it does not trigger again
+			    gbuffer[1] = GESTURE_OTHER;
+			    return GESTURE_LLL;
+		    }	
+				
+				    if (check_command ( &gbuffer[0] , &command11[0] ))
+		    {
+			    // command 11
+
+			    //change buffer so it does not trigger again
+			    gbuffer[1] = GESTURE_OTHER;
+			    return GESTURE_DUD;
+		    }					
+				
+				
+				
 				
 			#ifdef PID_GESTURE_TUNING
 			if (check_command ( &gbuffer[0] , &command4[0] ))

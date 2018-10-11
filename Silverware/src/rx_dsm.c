@@ -6,7 +6,7 @@
 #include "drv_time.h"
 #include "defines.h"
 #include "util.h"
-
+#include "drv_fmc.h"
 
 
 
@@ -27,6 +27,7 @@ int failsafe = 0;
 int rxmode = 0;
 int rx_ready = 0;
 int bind_safety = 0;
+int rx_bind_enable = 0;
 
 // internal dsm variables
 
@@ -160,27 +161,53 @@ void dsm_init(void)
 // Send Spektrum bind pulses to a GPIO e.g. TX1
 void rx_spektrum_bind(void)
 {
+#ifdef SERIAL_RX_SPEKBIND_RX_PIN
+	rx_bind_enable = fmc_read_float(56);
+	if (rx_bind_enable == 0){
         GPIO_InitTypeDef    GPIO_InitStructure;
-        GPIO_InitStructure.GPIO_Pin = SERIAL_RX_SPEKBIND_PIN;
+        GPIO_InitStructure.GPIO_Pin = SERIAL_RX_SPEKBIND_RX_PIN;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
         GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
         GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
         GPIO_Init(SERIAL_RX_PORT, &GPIO_InitStructure); 
         
         // RX line, set high
-        PIN_ON(SERIAL_RX_PORT, SERIAL_RX_SPEKBIND_PIN);
+        PIN_ON(SERIAL_RX_PORT, SERIAL_RX_SPEKBIND_RX_PIN);
         // Bind window is around 20-140ms after powerup
         delay(60000);
 
         for (uint8_t i = 0; i < BIND_PULSES; i++) { // 9 pulses for internal dsmx 11ms, 3 pulses for internal dsm2 22ms          
                 // RX line, drive low for 120us
-                PIN_OFF(SERIAL_RX_PORT, SERIAL_RX_SPEKBIND_PIN);
+                PIN_OFF(SERIAL_RX_PORT, SERIAL_RX_SPEKBIND_RX_PIN);
                 delay(120);
             
                 // RX line, drive high for 120us
-                PIN_ON(SERIAL_RX_PORT, SERIAL_RX_SPEKBIND_PIN);
+                PIN_ON(SERIAL_RX_PORT, SERIAL_RX_SPEKBIND_RX_PIN);
                 delay(120);
         }
+	}
+#endif
+        GPIO_InitTypeDef    GPIO_InitStructure;
+        GPIO_InitStructure.GPIO_Pin = SERIAL_RX_SPEKBIND_BINDTOOL_PIN;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+        GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+        GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+        GPIO_Init(SERIAL_RX_PORT, &GPIO_InitStructure); 
+        
+        // RX line, set high
+        PIN_ON(SERIAL_RX_PORT, SERIAL_RX_SPEKBIND_BINDTOOL_PIN);
+        // Bind window is around 20-140ms after powerup
+        delay(60000);
+
+        for (uint8_t i = 0; i < BIND_PULSES; i++) { // 9 pulses for internal dsmx 11ms, 3 pulses for internal dsm2 22ms          
+                // RX line, drive low for 120us
+                PIN_OFF(SERIAL_RX_PORT, SERIAL_RX_SPEKBIND_BINDTOOL_PIN);
+                delay(120);
+            
+                // RX line, drive high for 120us
+                PIN_ON(SERIAL_RX_PORT, SERIAL_RX_SPEKBIND_BINDTOOL_PIN);
+                delay(120);
+        }	
 }
 
 void rx_init(void)

@@ -59,15 +59,12 @@
 
 // *************Radio protocol selection
 // *************select only one
-//#define RX_BAYANG_PROTOCOL
-//#define RX_BAYANG_PROTOCOL_TELEMETRY
-#define RX_BAYANG_PROTOCOL_TELEMETRY_AUTOBIND
-//#define RX_BAYANG_PROTOCOL_BLE_BEACON
-//#define RX_BAYANG_BLE_APP
-//#define RX_NRF24_BAYANG_TELEMETRY
 //#define RX_SBUS
 //#define RX_DSMX_2048
 //#define RX_DSM2_1024
+//#define RX_NRF24_BAYANG_TELEMETRY
+//#define RX_BAYANG_PROTOCOL_BLE_BEACON
+#define RX_BAYANG_PROTOCOL_TELEMETRY_AUTOBIND
 
 // *************Transmitter Type Selection
 //#define USE_STOCK_TX
@@ -96,7 +93,7 @@
 #define HORIZON   CHAN_OFF
 #define PIDPROFILE CHAN_OFF              //For switching stickAccelerator & stickTransition profiles on pid.c page
 #define RATES CHAN_ON
-#define LEDS_ON !CHAN_10
+#define LEDS_ON CHAN_10
 
 // *************switch for fpv / other, requires fet
 // *************comment out to disable
@@ -129,12 +126,14 @@
 #define AUTO_VDROP_FACTOR
 
 // *************lower throttle when battery below threshold - forced landing low voltage cutoff
-//#define LVC_LOWER_THROTTLE
+// *************THIS FEATURE WILL BE OFF BY DEFAULT EVEN WHEN DEFINED - USE STICK GESTURE LEFT-LEFT-LEFT TO ACTIVATE THEN DOWN-DOWN-DOWN TO SAVE AS ON
+// *************Led light will blink once when LVC forced landing is turned on, blink twice when turned off, and will blink multiple times upon save command
+#define LVC_LOWER_THROTTLE
 #define LVC_LOWER_THROTTLE_VOLTAGE 3.30
 #define LVC_LOWER_THROTTLE_VOLTAGE_RAW 2.70
 #define LVC_LOWER_THROTTLE_KP 3.0
 
-// *************do not start software if battery is too low
+// *************do not start software if battery is too low (below 3.3v)
 // *************flashes 2 times repeatedly at startup
 //#define STOP_LOWBATTERY
 
@@ -160,14 +159,15 @@
 //#define STRONG_FILTERING
 #define VERY_STRONG_FILTERING
 //#define CUSTOM_FILTERING
+#define ALIENWHOOP_ZERO_FILTERING
 
 
 #ifdef CUSTOM_FILTERING
 // *************gyro low pass filter ( iir )
 // *************set only one below - kalman, 1st order, or second order - and adjust frequency
 //**************ABOVE 100 ADJUST IN INCRIMENTS OF 20, BELOW 100 ADJUST IN INCRIMENTS OF 10
-//#define SOFT_KALMAN_GYRO KAL1_HZ_70
-#define SOFT_LPF_1ST_HZ 80
+#define SOFT_KALMAN_GYRO KAL1_HZ_90
+//#define SOFT_LPF_1ST_HZ 80
 //#define SOFT_LPF_2ND_HZ 80
 
 // *************D term low pass filter type - set only one below and adjust frequency if adjustable filter is used
@@ -176,7 +176,7 @@
 #define  DTERM_LPF_2ND_HZ 100
 
 // *************enable motor output filter - select and adjust frequency
-#define MOTOR_FILTER2_ALPHA MFILT1_HZ_90
+#define MOTOR_FILTER2_ALPHA MFILT1_HZ_70
 //#define MOTOR_KAL KAL1_HZ_70
 #endif
 
@@ -269,11 +269,7 @@
 //#define STICK_TRAVEL_CHECK
 
 
-//#define SWITCHABLE_FEATURE_1
-#ifdef SWITCHABLE_FEATURE_1
-//linked to gesture RRR & saved to flash with DDD
-//toggles state of variable int flash_feature_1
-#endif
+
 
 
 //#############################################################################################################################
@@ -303,6 +299,22 @@
 #define MOTOR_MIN_ENABLE
 #define MOTOR_MIN_VALUE 0.05
 
+
+#ifdef LVC_LOWER_THROTTLE
+#define SWITCHABLE_FEATURE_2
+#endif
+
+#ifdef INVERT_YAW_PID
+#define SWITCHABLE_FEATURE_3
+#endif
+
+#ifdef ALIENWHOOP_ZERO_FILTERING
+#define SOFT_KALMAN_GYRO KAL1_HZ_90
+#define  DTERM_LPF_2ND_HZ 100
+#define MOTOR_FILTER2_ALPHA MFILT1_HZ_50
+#define SWITCHABLE_MOTOR_FILTER2_ALPHA MFILT1_HZ_90
+#define SWITCHABLE_FEATURE_1
+#endif
 
 #ifdef WEAK_FILTERING
 #define SOFT_KALMAN_GYRO KAL1_HZ_90
@@ -362,7 +374,7 @@
 
 // overclock to 64Mhz
 
-//#define ENABLE_OVERCLOCK
+#define ENABLE_OVERCLOCK
 
 #pragma diag_warning 1035 , 177 , 4017
 #pragma diag_error 260
@@ -418,7 +430,7 @@
 
 // SPI PINS DEFINITONS & RADIO
 #if defined(RX_SBUS) || defined(RX_DSMX_2048) || defined(RX_DSM2_1024)
-#define SERIAL_RX_SPEKBIND_PIN GPIO_Pin_3
+#define SERIAL_RX_SPEKBIND_BINDTOOL_PIN GPIO_Pin_3
 #define SERIAL_RX_PIN GPIO_Pin_14
 #define SERIAL_RX_PORT GPIOA
 #define SERIAL_RX_SOURCE GPIO_PinSource14
@@ -483,7 +495,7 @@
 
 // SPI PINS DEFINITONS & RADIO
 #if defined(RX_SBUS) || defined(RX_DSMX_2048) || defined(RX_DSM2_1024)
-#define SERIAL_RX_SPEKBIND_PIN GPIO_Pin_3
+#define SERIAL_RX_SPEKBIND_BINDTOOL_PIN GPIO_Pin_3
 #define SERIAL_RX_PIN GPIO_Pin_14
 #define SERIAL_RX_PORT GPIOA
 #define SERIAL_RX_SOURCE GPIO_PinSource14
@@ -546,7 +558,7 @@
 
 // SPI PINS DEFINITONS & RADIO
 #if defined(RX_SBUS) || defined(RX_DSMX_2048) || defined(RX_DSM2_1024)
-#define SERIAL_RX_SPEKBIND_PIN GPIO_Pin_3
+#define SERIAL_RX_SPEKBIND_BINDTOOL_PIN GPIO_Pin_3
 #define SERIAL_RX_PIN GPIO_Pin_14
 #define SERIAL_RX_PORT GPIOA
 #define SERIAL_RX_SOURCE GPIO_PinSource14
@@ -609,7 +621,8 @@
 
 // SPI PINS DEFINITONS & RADIO
 #if defined(RX_SBUS) || defined(RX_DSMX_2048) || defined(RX_DSM2_1024)
-#define SERIAL_RX_SPEKBIND_PIN GPIO_Pin_2
+#define SERIAL_RX_SPEKBIND_BINDTOOL_PIN GPIO_Pin_2
+#define SERIAL_RX_SPEKBIND_RX_PIN GPIO_Pin_3
 #define SERIAL_RX_PIN GPIO_Pin_3
 #define SERIAL_RX_PORT GPIOA
 #define SERIAL_RX_SOURCE GPIO_PinSource3

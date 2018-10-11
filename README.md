@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/silver13/BoldClash-BWHOOP-B-03.svg?branch=master)](https://travis-ci.org/silver13/BoldClash-BWHOOP-B-03)
 
 ## NotFastEnuf Notes - Bwhoop B03 Silverware modified to work on BWHOOP, E011, or H8mini_blue_board.
-Last major update 5.7.18
+Last major update 9.11.18
 
 Testing a new layout for config.h  - feel free to let me know what you think.  Your feedback is appreciated. 
 
@@ -9,19 +9,19 @@ There are two main steps to prep this file for flash.  The first will be in con
 
 STEP 1:  Open config.h with keil and make edits to set your selections in 6 categories.
 
-         _Hardware Selection_ - select your target: bwhoop, e011, or H8mini_blue_board based hardware
+         _Hardware Selection_ - select your target: alienwhoop zer0, bwhoop, e011, or H8mini_blue_board based hardware
          
          _Receiver Settings_ - set rates, expo, radio protocol, transmitter type and assign features to auxiliary channel switches
                               
-         _Voltage Settings_ - low voltage cutoff and other voltage related settings
+         _Voltage Settings_ - low voltage cutoff and other voltage related settings - UPDATE: LVC can now be switched on via stick gesture.  See notes for Berzerker release on the releases page.
          
-         _Filter Settings_ -set gyro filter and D term filter frequencies and orders
+         _Filter Settings_ -set gyro filter and D term filter frequencies and orders - UPDATE: reccomendation is to use alienwhoop switchable filtering.  See notes for Berzerker release on releases page.
          
-         _Motor Output Settings_ - set pwm rate, motor curves, inverted yaw for props out, and features related to motor output
+         _Motor Output Settings_ - set pwm rate, motor curves, inverted yaw for props out, and features related to motor output - UPDATE: props in/props out is now switchable via stick gesture with alienwhoop settings.  See notes for Berzerker release for instructions.
                                  
          _Additional Features_ - remaining special features 
          
-STEP 2:  Open pid.c with keil and either edit pids to your preferred values or select a set of pids that I have prepared.   I plan to keep all my tunes in pid.c and will have them labeled and noted with the associated filter settings for each type of build.  All you have to do to use one of my tunes is uncomment the pid group you want to use and make sure the others are commented out.  I will keep whatever pids I'm using updated here if I change them and the default set will always be for a 7mm whoop with fpv gear installed.  Setpoint weight values are also just below pids - if you want a sharper stick feel on one of my tunes then change these values closer to 1.0
+STEP 2:  Open pid.c with keil and either edit pids to your preferred values or select a set of pids that I have prepared.   I plan to keep all my tunes in pid.c and will have them labeled and noted with the associated filter settings for each type of build.  All you have to do to use one of my tunes is uncomment the pid group you want to use and make sure the others are commented out.  I will keep whatever pids I'm using updated here if I change them and the default set will always be for a whoop with fpv gear installed.  Setpoint weight values for P are also just below pids - if you want a sharper stick feel on one of my tunes then change these values closer to 1.0.  Stick Accelerator and transition values are here too.  There are two profiles you can populate which are switchable via auxillary channel.
 
 ## Current Experimental Features and DEVIATIONS FROM STOCK SILVERWARE 
 
@@ -45,6 +45,7 @@ STEP 2:  Open pid.c with keil and either edit pids to your preferred values or 
  - STICK_TRAVEL_CHECK feature has been added to give the ability to make sure your sticks are reaching 100% throws in software.  This feature when activated will override the function of the stick gesture aux channel.  RIGHT-RIGHT-DOWN will enter a mode where the throttle is inactive and the led will rapid blink when you move the sticks to 100% throws.  If you do not see a rapid led blink at stick extents - scale up your throws in your transmitter untill you do.  LEFT-LEFT-DOWN will exit this mode.  Suggestion to DEVO 7e users - you may want to define this check once, then reflash after checking with the feature off so that you can use the stick gesture channel as a supliment for other features since you only have 2 switches.
  - EXPO VALUES have now been split into a seperate variable for each individual axis AND a seperate expo set is available for acro mode and leveled modes.  This gives the the pilot the ability to run high expo in acro with fast rotational rates for freestyle but also switch into level mode with a completely different set of expo variables where more linear controls may be desired for racing.
  - Alienwhoop Zer0 target has been added and work continues to optomize its feature set.  This target was origionaly intended for SBUS receiver but now supports SPI based XN297L receiver modules.  One can be found inside most toy transmitters and removed to become an affordable but capable micro receiver with telemetry.  Selecting any of the Bayang protocols will automatically populate code for the SPI receiver option - alternatively selecting SBUS will deactivate SPI and enable the SBUS appropriate code.
+ - Additional notes have been added to the releases page for Alienwhoop ZER0 firmware including new switchable features via stick gestures.  Please read these notes for further instructions.
 
  ## Bikemike's Blheli 4way Interface Support(from Betaflight) 15.03.18 (Yets)
 

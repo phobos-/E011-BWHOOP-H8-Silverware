@@ -124,6 +124,8 @@ int binding_while_armed = 1;
 
 //Experimental Flash Memory Feature
 int flash_feature_1 = 0;
+int flash_feature_2 = 0;
+int flash_feature_3 = 0;
 
 // for led flash on gestures
 int ledcommand = 0;
@@ -153,9 +155,11 @@ clk_init();
 	
   time_init();
 
-	#if defined(RX_DSMX_2048) || defined(RX_DSM2_1024)    
-  rx_spektrum_bind();    
-  #endif
+
+#if defined(RX_DSMX_2048) || defined(RX_DSM2_1024)    
+		rx_spektrum_bind(); 
+#endif
+	
 	
 	delay(100000);
 		
@@ -190,14 +194,16 @@ aux[CH_AUX1] = 1;
 #endif
     
     
-    #ifdef FLASH_SAVE1
+ #ifdef FLASH_SAVE1
 // read pid identifier for values in file pid.c
     flash_hard_coded_pid_identifier();
 
 // load flash saved variables
     flash_load( );
 #endif
-    	
+
+
+	
 	rx_init();
 
 	
@@ -427,7 +433,7 @@ if ( LED_NUMBER > 0)
                 }
             else 
             {  
-                int leds_on = aux[LEDS_ON];
+                int leds_on = !aux[LEDS_ON];
                 if (ledcommand)
                 {
                     if (!ledcommandtime)
