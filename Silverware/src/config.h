@@ -42,6 +42,14 @@
 #define ANGLE_EXPO_PITCH 0.0
 #define ANGLE_EXPO_YAW 0.55
 
+//#define BETAFLIGHT_RATES
+#define BF_RC_RATE_ROLL 1.00
+#define BF_RC_RATE_PITCH 1.00
+#define BF_RC_RATE_YAW 1.00
+#define BF_SUPER_EXPO_ROLL 0.70
+#define BF_SUPER_EXPO_PITCH 0.70
+#define BF_SUPER_EXPO_YAW 0.70
+
 // *************transmitter stick adjustable deadband for roll/pitch/yaw
 // *************.01f = 1% of stick range - comment out to disable
 #define STICKS_DEADBAND .01f
